@@ -1,7 +1,7 @@
 import {Table} from "dexie";
 import Database from "./Database";
 import ChangeWatcher from "./ChangeWatcher";
-import {IList} from "./types";
+import {IList, IListItem} from "./types";
 
 
 export default class Api {
@@ -33,6 +33,15 @@ export default class Api {
         return this.db.lists.orderBy('name').toArray();
     }
 
+    async getListItems(id: string, includeChecked: boolean = false) {
+        let query = this.db.items.where('listId').equals(id);
+        if(!includeChecked) query.and(it => !it.isChecked);
+        return query.toArray();
+    }
+
+    async saveListItem(item: IListItem) {
+        return this.save(this.db.items, item);
+    }
 
     private async save(table: Table, obj: Object) {
         // @ts-ignore

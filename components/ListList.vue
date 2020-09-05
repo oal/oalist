@@ -10,10 +10,9 @@
         </v-list-item>
     </v-list>
 </template>
+
 <script>
 export default {
-    name: 'ListList',
-
     data() {
         return {
             lists: []
