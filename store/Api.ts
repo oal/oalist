@@ -1,7 +1,7 @@
 import {Table} from "dexie";
 import Database from "./Database";
 import ChangeWatcher from "./ChangeWatcher";
-import {IList, IListItem} from "./types";
+import {IList, IListItem, IRow} from "./types";
 
 
 export default class Api {
@@ -17,9 +17,8 @@ export default class Api {
     }
 
     async createList(name: string) {
-        return this.db.lists.add({name});
+        return this.db.lists.add({name, modified: new Date()});
     }
-
 
     async saveList(list: IList) {
         return this.save(this.db.lists, list);
@@ -35,17 +34,27 @@ export default class Api {
 
     async getListItems(id: string, includeChecked: boolean = false) {
         let query = this.db.items.where('listId').equals(id);
-        if(!includeChecked) query.and(it => !it.isChecked);
-        return query.toArray();
+        if (!includeChecked) query.and(it => !it.isChecked);
+        return query.reverse().sortBy('modified');
     }
 
     async saveListItem(item: IListItem) {
         return this.save(this.db.items, item);
     }
 
-    private async save(table: Table, obj: Object) {
-        // @ts-ignore
-        if (obj['id']) return table.update(obj['id'], obj);
-        return table.add(obj);
+    async searchListItems(listId: string, search: string) {
+        return this.db.items
+            .where('text')
+            .startsWithIgnoreCase(search).limit(5)
+            .and(it => it.isChecked)
+            .toArray();
+    }
+
+    private async save(table: Table, obj: IRow) {
+        let data = {...obj, modified: new Date()};
+        if (obj.id) {
+            return table.update(obj.id, data);
+        }
+        return table.add(data);
     }
 }

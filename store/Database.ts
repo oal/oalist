@@ -1,10 +1,11 @@
 import Dexie, {Table} from "dexie";
 import observable from "dexie-observable";
 import relationships from "dexie-relationships";
+import {IList, IListItem} from "~/store/types";
 
 export default class Database extends Dexie {
     lists: Table<IList, string>;
-    items: Table<IList, string>;
+    items: Table<IListItem, string>;
 
     constructor() {
         super(
@@ -14,8 +15,8 @@ export default class Database extends Dexie {
         );
 
         this.version(1).stores({
-            lists: '$$id, name',
-            items: '$$id, text, isChecked, listId -> lists.id'
+            lists: '$$id, name, modified',
+            items: '$$id, text, modified, listId -> lists.id'
         });
 
         this.lists = this.table('lists');
