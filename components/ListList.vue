@@ -2,7 +2,7 @@
     <v-list>
         <v-list-item v-for="(item, i) in lists" :key="i" :to="{name: 'lists-id', params: {id: item.id}}" router exact>
             <v-list-item-action>
-                <v-icon>{{ item.icon }}</v-icon>
+                <v-icon :style="item.color ? `color: ${item.color}` : null">{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
                 <v-list-item-title v-text="item.name"/>

@@ -6,6 +6,7 @@ export interface IRow {
 export interface IList extends IRow {
     name: string
     icon: string
+    color: string
 }
 
 export interface IListItem extends IRow {

@@ -23,7 +23,7 @@ export default {
     data() {
         return {
             icons: icons,
-            search: ''
+            search: this.value ? this.value.split('-')[1] : ''
         }
     },
 

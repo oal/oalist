@@ -20,6 +20,7 @@ export default class Api {
         return this.db.lists.add({
             name,
             icon: 'mdi-format-list-checks',
+            color: '#000',
             modified: new Date()
         });
     }

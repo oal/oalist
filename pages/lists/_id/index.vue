@@ -2,7 +2,7 @@
     <div>
         <portal to="toolbar">
             <v-layout align-center>
-                <v-icon color="primary" class="mr-2">{{ list.icon }}</v-icon>
+                <v-icon :style="listColorStyle" class="mr-2">{{ list.icon }}</v-icon>
                 <v-toolbar-title v-text="list.name"/>
                 <v-spacer/>
                 <v-btn icon @click="edit = !edit" :color="edit ? 'primary' : null">
@@ -15,14 +15,22 @@
             <v-layout align-center>
                 <v-flex>
                     <v-text-field solo v-model="editName" hide-details :prepend-inner-icon="list.icon"
-                                  @click:prepend-inner="showIconSelector = !showIconSelector" class="mr-3"/>
+                                  @click:prepend-inner="showIconSelector = !showIconSelector" class="mr-3">
+                        <template v-slot:append>
+                            <v-icon :style="listColorStyle"
+                                    @click="showColorPicker = !showColorPicker">mdi-format-color-fill
+                            </v-icon>
+                        </template>
+                    </v-text-field>
                 </v-flex>
                 <v-flex shrink>
                     <v-btn large color="primary" @click="saveListName" :disabled="!editName.length">Rename</v-btn>
                 </v-flex>
             </v-layout>
             <div>
-                <IconSelect v-if="showIconSelector" class="pt-3" v-model="list.icon"></IconSelect>
+                <IconSelect v-if="showIconSelector" class="pt-3" v-model="list.icon" @input="saveList"></IconSelect>
+                <v-color-picker v-if="showColorPicker" @input="saveList({color: $event.hex})"
+                                show-swatches hide-canvas hide-inputs mode="hexa"/>
             </div>
         </v-container>
         <NewListItem :list-id="list.id" v-else/>
@@ -64,6 +72,7 @@ export default {
             edit: false,
             editName: '',
             showIconSelector: false,
+            showColorPicker: false,
 
             showChecked: false,
 
@@ -117,9 +126,12 @@ export default {
         },
         showChecked() {
             this.loadItems();
-        },
-        'list.icon'() {
-            this.saveList();
+        }
+    },
+
+    computed: {
+        listColorStyle() {
+            return this.list.color ? `color: ${this.list.color}` : null;
         }
     }
 }

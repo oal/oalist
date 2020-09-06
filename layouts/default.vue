@@ -1,17 +1,22 @@
 <template>
     <v-app dark>
         <v-navigation-drawer v-model="drawer" fixed app>
-            <v-list>
-                <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
-                    <v-list-item-action>
-                        <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                        <v-list-item-title v-text="item.title"/>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-            <ListList/>
+            <div class="menu-wrapper">
+                <ListList/>
+
+                <v-spacer/>
+
+                <v-list>
+                    <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+                        <v-list-item-action>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-action>
+                        <v-list-item-content>
+                            <v-list-item-title v-text="item.title"/>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </div>
         </v-navigation-drawer>
         <v-app-bar fixed app>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
@@ -33,13 +38,13 @@ export default {
             drawer: false,
             items: [
                 {
-                    icon: 'mdi-apps',
-                    title: 'Welcome',
+                    icon: 'mdi-playlist-plus',
+                    title: 'Create list',
                     to: '/'
                 },
                 {
-                    icon: 'mdi-chart-bubble',
-                    title: 'Inspire',
+                    icon: 'mdi-cog-box',
+                    title: 'Settings',
                     to: '/inspire'
                 }
             ],
@@ -48,3 +53,11 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.menu-wrapper {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+}
+</style>
