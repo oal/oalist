@@ -3,6 +3,7 @@
         <v-layout align-center>
             <v-flex>
                 <v-autocomplete
+                    placeholder="New item..."
                     v-model="text"
                     :search-input.sync="search"
                     :items="items"

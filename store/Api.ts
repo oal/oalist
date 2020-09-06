@@ -17,7 +17,11 @@ export default class Api {
     }
 
     async createList(name: string) {
-        return this.db.lists.add({name, modified: new Date()});
+        return this.db.lists.add({
+            name,
+            icon: 'mdi-format-list-checks',
+            modified: new Date()
+        });
     }
 
     async saveList(list: IList) {

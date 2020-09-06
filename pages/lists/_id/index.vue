@@ -2,6 +2,7 @@
     <div>
         <portal to="toolbar">
             <v-layout align-center>
+                <v-icon color="primary" class="mr-2">{{ list.icon }}</v-icon>
                 <v-toolbar-title v-text="list.name"/>
                 <v-spacer/>
                 <v-btn icon @click="edit = !edit" :color="edit ? 'primary' : null">
@@ -13,13 +14,16 @@
         <v-container class="grey lighten-4" v-if="edit">
             <v-layout align-center>
                 <v-flex>
-                    <v-text-field solo v-model="editName" hide-details/>
+                    <v-text-field solo v-model="editName" hide-details :prepend-inner-icon="list.icon"
+                                  @click:prepend-inner="showIconSelector = !showIconSelector" class="mr-3"/>
                 </v-flex>
-                <v-spacer/>
                 <v-flex shrink>
-                    <v-btn large color="primary" @click="saveList" :disabled="!editName.length">Rename</v-btn>
+                    <v-btn large color="primary" @click="saveListName" :disabled="!editName.length">Rename</v-btn>
                 </v-flex>
             </v-layout>
+            <div>
+                <IconSelect v-if="showIconSelector" class="pt-3" v-model="list.icon"></IconSelect>
+            </div>
         </v-container>
         <NewListItem :list-id="list.id" v-else/>
 
@@ -38,10 +42,12 @@
 <script>
 import NewListItem from "@/components/NewListItem.vue";
 import ListItem from "~/components/ListItem.vue";
+import IconSelect from "@/components/IconSelect.vue";
 
 export default {
     components: {
         NewListItem,
+        IconSelect,
         ListItem
     },
     async asyncData(ctx) {
@@ -57,6 +63,8 @@ export default {
             items: [],
             edit: false,
             editName: '',
+            showIconSelector: false,
+
             showChecked: false,
 
             addItemText: null
@@ -76,11 +84,16 @@ export default {
         async loadItems() {
             this.items = await this.$api.getListItems(this.list.id, this.showChecked);
         },
-        async saveList() {
-            await this.$api.saveList({...this.list, name: this.editName});
-            this.list = await this.$api.getList(this.list.id);
+        async saveListName() {
+            await this.saveList({name: this.editName});
             this.edit = false;
         },
+
+        async saveList(diffs = {}) {
+            await this.$api.saveList({...this.list, ...diffs});
+            this.list = await this.$api.getList(this.list.id);
+        },
+
         addItem(item) {
             this.items.splice(0, 0, item);
         },
@@ -104,6 +117,9 @@ export default {
         },
         showChecked() {
             this.loadItems();
+        },
+        'list.icon'() {
+            this.saveList();
         }
     }
 }
