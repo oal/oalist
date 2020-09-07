@@ -14,15 +14,18 @@
                     </template>
 
                     <v-card class="grey lighten-4">
-                        <v-card-title class="headline pb-1">
-                            List settings
-                        </v-card-title>
-                        <ListEdit v-model="list" v-if="edit"/>
-                        <v-divider></v-divider>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" text @click="edit = false">Close</v-btn>
-                        </v-card-actions>
+                        <v-layout align-center class="pt-3 pr-3">
+                            <v-card-title class="headline py-0">
+                                List settings
+                            </v-card-title>
+
+                            <v-spacer/>
+
+                            <v-btn color="secondary" icon @click="edit = false">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-layout>
+                        <ListEdit v-model="list" v-if="edit" @save="edit=false"/>
                     </v-card>
                 </v-dialog>
             </v-layout>

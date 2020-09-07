@@ -1,25 +1,22 @@
 <template>
-    <v-layout column justify-center align-center>
-        <v-flex xs12 sm8 md6>
-            <v-text-field v-model="newList"/>
-            <v-btn @click="createList">Add list</v-btn>
-        </v-flex>
+    <v-layout class="blue-grey lighten-4" style="min-height: 100%;">
+        <portal to="toolbar">
+            <v-layout align-center>
+                <v-toolbar-title>Create list</v-toolbar-title>
+                <v-spacer/>
+            </v-layout>
+        </portal>
+
+        <ListEdit/>
     </v-layout>
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            newList: ''
-        }
-    },
+import ListEdit from "~/components/ListEdit.vue";
 
-    methods: {
-        async createList() {
-            let id = await this.$api.createList(this.newList);
-            await this.$router.push({name: 'lists-id', params: {id}})
-        }
-    },
+export default {
+    components: {
+        ListEdit
+    }
 }
 </script>

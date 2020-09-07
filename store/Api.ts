@@ -16,13 +16,12 @@ export default class Api {
         this._changes = new ChangeWatcher(this.db);
     }
 
-    async createList(name: string) {
-        return this.db.lists.add({
-            name,
-            icon: 'mdi-format-list-checks',
-            color: '#000',
-            modified: new Date()
-        });
+    async createList(list: IList) {
+        if (!list.color) list.color = '#000';
+        if (!list.icon) list.icon = 'mdi-format-list-checks';
+        list.modified = new Date();
+
+        return this.db.lists.add(list);
     }
 
     async saveList(list: IList) {
@@ -58,7 +57,8 @@ export default class Api {
     private async save(table: Table, obj: IRow) {
         let data = {...obj, modified: new Date()};
         if (obj.id) {
-            return table.update(obj.id, data);
+            await table.update(obj.id, data);
+            return obj.id;
         }
         return table.add(data);
     }
