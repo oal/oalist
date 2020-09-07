@@ -5,35 +5,31 @@
                 <v-icon :style="listColorStyle" class="mr-2">{{ list.icon }}</v-icon>
                 <v-toolbar-title v-text="list.name"/>
                 <v-spacer/>
-                <v-btn icon @click="edit = !edit" :color="edit ? 'primary' : null">
-                    <v-icon>mdi-cog</v-icon>
-                </v-btn>
+
+                <v-dialog v-model="edit" width="500">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon @click="edit = !edit" :color="edit ? 'primary' : null" v-on="on">
+                            <v-icon>mdi-cog</v-icon>
+                        </v-btn>
+                    </template>
+
+                    <v-card class="grey lighten-4">
+                        <v-card-title class="headline pb-1">
+                            List settings
+                        </v-card-title>
+                        <ListEdit v-model="list" v-if="edit"/>
+                        <v-divider></v-divider>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" text @click="edit = false">Close</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-layout>
         </portal>
 
-        <v-container class="grey lighten-4" v-if="edit">
-            <v-layout align-center>
-                <v-flex>
-                    <v-text-field solo v-model="editName" hide-details :prepend-inner-icon="list.icon"
-                                  @click:prepend-inner="showIconSelector = !showIconSelector" class="mr-3">
-                        <template v-slot:append>
-                            <v-icon :style="listColorStyle"
-                                    @click="showColorPicker = !showColorPicker">mdi-format-color-fill
-                            </v-icon>
-                        </template>
-                    </v-text-field>
-                </v-flex>
-                <v-flex shrink>
-                    <v-btn large color="primary" @click="saveListName" :disabled="!editName.length">Rename</v-btn>
-                </v-flex>
-            </v-layout>
-            <div>
-                <IconSelect v-if="showIconSelector" class="pt-3" v-model="list.icon" @input="saveList"></IconSelect>
-                <v-color-picker v-if="showColorPicker" @input="saveList({color: $event.hex})"
-                                show-swatches hide-canvas hide-inputs mode="hexa"/>
-            </div>
-        </v-container>
-        <NewListItem :list-id="list.id" v-else/>
+
+        <NewListItem :list-id="list.id"/>
 
         <v-list>
             <ListItem :value="item" v-for="item in items" :key="item.id" @checked="onItemChecked(item)"></ListItem>
@@ -50,12 +46,12 @@
 <script>
 import NewListItem from "@/components/NewListItem.vue";
 import ListItem from "~/components/ListItem.vue";
-import IconSelect from "@/components/IconSelect.vue";
+import ListEdit from "~/components/ListEdit.vue";
 
 export default {
     components: {
+        ListEdit,
         NewListItem,
-        IconSelect,
         ListItem
     },
     async asyncData(ctx) {
@@ -70,9 +66,7 @@ export default {
         return {
             items: [],
             edit: false,
-            editName: '',
-            showIconSelector: false,
-            showColorPicker: false,
+
 
             showChecked: false,
 
@@ -93,16 +87,6 @@ export default {
         async loadItems() {
             this.items = await this.$api.getListItems(this.list.id, this.showChecked);
         },
-        async saveListName() {
-            await this.saveList({name: this.editName});
-            this.edit = false;
-        },
-
-        async saveList(diffs = {}) {
-            await this.$api.saveList({...this.list, ...diffs});
-            this.list = await this.$api.getList(this.list.id);
-        },
-
         addItem(item) {
             this.items.splice(0, 0, item);
         },
@@ -121,9 +105,6 @@ export default {
         '$route.params.id'() {
             console.log('ID CHANGED')
         },
-        edit(state) {
-            if (state) this.editName = this.list.name;
-        },
         showChecked() {
             this.loadItems();
         }
@@ -137,5 +118,3 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>

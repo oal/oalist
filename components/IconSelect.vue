@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-text-field v-model="search" solo label="Icon search" hide-details/>
-        <v-layout row wrap justify-space-between class="px-3 py-1">
+        <v-text-field v-model="search" label="Icon search" :placeholder="processedValue" hide-details class="mb-2"/>
+        <v-layout row wrap :justify-space-between="filteredIcons.length > 4" class="px-3 py-1 icon-search-results">
             <v-icon v-for="icon in filteredIcons" :key="icon" large
                     :class="['pa-2', icon === processedValue ? 'primary icon-selected' : null]"
                     @click="selectIcon(icon)">
@@ -56,5 +56,10 @@ export default {
 .icon-selected {
     color: #fff !important;
     border-radius: 25%;
+}
+
+.icon-search-results {
+    max-height: 150px;
+    overflow-y: scroll;
 }
 </style>
